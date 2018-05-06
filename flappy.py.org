@@ -7,8 +7,8 @@ from pygame.locals import *
 
 
 FPS = 30
-SCREENWIDTH  = 400
-SCREENHEIGHT = 400
+SCREENWIDTH  = 288
+SCREENHEIGHT = 512
 # amount by which base can maximum shift to left
 PIPEGAPSIZE  = 100 # gap between upper and lower part of pipe
 BASEY        = SCREENHEIGHT * 0.79
@@ -17,30 +17,31 @@ IMAGES, SOUNDS, HITMASKS = {}, {}, {}
 
 # list of all possible players (tuple of 3 positions of flap)
 PLAYERS_LIST = (
-    # bb8
+    # red bird
     (
-        'assets/sprites/sw/bb8_disney.jpg',
-        'assets/sprites/sw/bb8_disney.jpg',
-        'assets/sprites/sw/bb8_disney.jpg'
+        'assets/sprites/redbird-upflap.png',
+        'assets/sprites/redbird-midflap.png',
+        'assets/sprites/redbird-downflap.png',
     ),
-    # bb8
+    # blue bird
     (
-        'assets/sprites/sw/bb8_disney.jpg',
-        'assets/sprites/sw/bb8_disney.jpg',
-        'assets/sprites/sw/bb8_disney.jpg'
+        # amount by which base can maximum shift to left
+        'assets/sprites/bluebird-upflap.png',
+        'assets/sprites/bluebird-midflap.png',
+        'assets/sprites/bluebird-downflap.png',
     ),
-    # bb8
+    # yellow bird
     (
-        'assets/sprites/sw/bb8_disney.jpg',
-        'assets/sprites/sw/bb8_disney.jpg',
-        'assets/sprites/sw/bb8_disney.jpg'
-    )
+        'assets/sprites/yellowbird-upflap.png',
+        'assets/sprites/yellowbird-midflap.png',
+        'assets/sprites/yellowbird-downflap.png',
+    ),
 )
 
 # list of backgrounds
 BACKGROUNDS_LIST = (
-    'assets/sprites/sw/starwars_background.jpg',
-    'assets/sprites/sw/starwars_background.jpg'
+    'assets/sprites/background-day.png',
+    'assets/sprites/background-night.png',
 )
 
 # list of pipes
@@ -61,7 +62,7 @@ def main():
     pygame.init()
     FPSCLOCK = pygame.time.Clock()
     SCREEN = pygame.display.set_mode((SCREENWIDTH, SCREENHEIGHT))
-    pygame.display.set_caption('BB8 Game')
+    pygame.display.set_caption('Flappy Bird')
 
     # numbers sprites for score display
     IMAGES['numbers'] = (
@@ -80,23 +81,21 @@ def main():
     # game over sprite
     IMAGES['gameover'] = pygame.image.load('assets/sprites/gameover.png').convert_alpha()
     # message sprite for welcome screen
-    IMAGES['message'] = pygame.image.load('assets/sprites/sw/message.jpg').convert_alpha()
+    IMAGES['message'] = pygame.image.load('assets/sprites/message.png').convert_alpha()
     # base (ground) sprite
     IMAGES['base'] = pygame.image.load('assets/sprites/base.png').convert_alpha()
 
     # sounds
     if 'win' in sys.platform:
-        #soundExt = '.wav'
-        soundExt = '.m4a'
+        soundExt = '.wav'
     else:
-        #soundExt = '.ogg'
-        soundExt = '.m4a'
+        soundExt = '.ogg'
 
-    SOUNDS['disappointed']    = pygame.mixer.Sound('assets/audio/sw/bb8_disappointed' + soundExt)
-    SOUNDS['success']    = pygame.mixer.Sound('assets/audio/sw/bb8_success' + soundExt)
+    SOUNDS['die']    = pygame.mixer.Sound('assets/audio/die' + soundExt)
+    SOUNDS['hit']    = pygame.mixer.Sound('assets/audio/hit' + soundExt)
     SOUNDS['point']  = pygame.mixer.Sound('assets/audio/point' + soundExt)
     SOUNDS['swoosh'] = pygame.mixer.Sound('assets/audio/swoosh' + soundExt)
-    SOUNDS['move']   = pygame.mixer.Sound('assets/audio/sw/bb8_move' + soundExt)
+    SOUNDS['wing']   = pygame.mixer.Sound('assets/audio/wing' + soundExt)
 
     while True:
         # select random background sprites
@@ -145,7 +144,7 @@ def showWelcomeAnimation():
     # iterator used to change playerIndex after every 5th iteration
     loopIter = 0
 
-    playerx = int(SCREENWIDTH * 0.3)
+    playerx = int(SCREENWIDTH * 0.2)
     playery = int((SCREENHEIGHT - IMAGES['player'][0].get_height()) / 2)
 
     messagex = int((SCREENWIDTH - IMAGES['message'].get_width()) / 2)
@@ -165,7 +164,7 @@ def showWelcomeAnimation():
                 sys.exit()
             if event.type == KEYDOWN and (event.key == K_SPACE or event.key == K_UP):
                 # make first flap sound and return values for mainGame
-                SOUNDS['move'].play()
+                SOUNDS['wing'].play()
                 return {
                     'playery': playery + playerShmVals['val'],
                     'basex': basex,
@@ -184,7 +183,7 @@ def showWelcomeAnimation():
         SCREEN.blit(IMAGES['player'][playerIndex],
                     (playerx, playery + playerShmVals['val']))
         SCREEN.blit(IMAGES['message'], (messagex, messagey))
-        #SCREEN.blit(IMAGES['base'], (basex, BASEY))
+        SCREEN.blit(IMAGES['base'], (basex, BASEY))
 
         pygame.display.update()
         FPSCLOCK.tick(FPS)
@@ -237,7 +236,7 @@ def mainGame(movementInfo):
                 if playery > -2 * IMAGES['player'][0].get_height():
                     playerVelY = playerFlapAcc
                     playerFlapped = True
-                    SOUNDS['move'].play()
+                    SOUNDS['wing'].play()
 
         # check for crash here
         crashTest = checkCrash({'x': playerx, 'y': playery, 'index': playerIndex},
@@ -307,7 +306,7 @@ def mainGame(movementInfo):
             SCREEN.blit(IMAGES['pipe'][0], (uPipe['x'], uPipe['y']))
             SCREEN.blit(IMAGES['pipe'][1], (lPipe['x'], lPipe['y']))
 
-        #SCREEN.blit(IMAGES['base'], (basex, BASEY))
+        SCREEN.blit(IMAGES['base'], (basex, BASEY))
         # print score so player overlaps the score
         showScore(score)
 
@@ -372,7 +371,7 @@ def showGameOverScreen(crashInfo):
             SCREEN.blit(IMAGES['pipe'][0], (uPipe['x'], uPipe['y']))
             SCREEN.blit(IMAGES['pipe'][1], (lPipe['x'], lPipe['y']))
 
-        #SCREEN.blit(IMAGES['base'], (basex, BASEY))
+        SCREEN.blit(IMAGES['base'], (basex, BASEY))
         showScore(score)
 
         playerSurface = pygame.transform.rotate(IMAGES['player'][1], playerRot)
