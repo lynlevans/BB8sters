@@ -114,7 +114,7 @@ def main():
         IMAGES['pipe'] = (
             pygame.transform.rotate(
                 pygame.image.load(PIPES_LIST[pipeindex]).convert_alpha(), 180),
-            pygame.image.load(PIPES_LIST[pipeindex]).convert_alpha(),
+                pygame.image.load(PIPES_LIST[pipeindex]).convert_alpha(),
         )
 
         # hismask for pipes
@@ -136,7 +136,7 @@ def main():
 
 
 def showWelcomeAnimation():
-    """Shows welcome screen animation of flappy bird"""
+    """Shows welcome screen animation of bb8"""
     # index of player to blit on screen
     playerIndex = 0
     playerIndexGen = cycle([0, 1, 2, 1])
@@ -215,9 +215,9 @@ def mainGame(movementInfo):
     pipeVelX = -4
 
     # player velocity, max velocity, downward accleration, accleration on flap
-    playerVelY    =  -9   # player's velocity along Y, default same as playerFlapped
-    playerMaxVelY =  10   # max vel along Y, max descend speed
-    playerMinVelY =  -8   # min vel along Y, max ascend speed
+    playerVelY    =  0   # player's velocity along Y, default same as playerFlapped
+    playerMaxVelY =  0   # max vel along Y, max descend speed
+    playerMinVelY =  0   # min vel along Y, max ascend speed
     playerAccY    =   1   # players downward accleration
     playerRot     =  45   # player's rotation
     playerVelRot  =   3   # angular speed
