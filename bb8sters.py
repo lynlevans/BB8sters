@@ -164,6 +164,12 @@ def showWelcomeAnimation():
             if event.type == KEYDOWN and (event.key == K_SPACE or event.key == K_UP):
                 # make first move sound and return values for mainGame
                 SOUNDS['move'].play()
+                SCREEN.blit(IMAGES['background'], (0,0))
+                SCREEN.blit(IMAGES['player'][playerIndex],
+                            (playerx, playery + playerShmVals['val']))
+
+                pygame.display.update()
+                FPSCLOCK.tick(FPS)
                 return {
                     'playery': playery + playerShmVals['val'],
                     'basex': basex,
@@ -182,7 +188,6 @@ def showWelcomeAnimation():
         SCREEN.blit(IMAGES['player'][playerIndex],
                     (playerx, playery + playerShmVals['val']))
         SCREEN.blit(IMAGES['message'], (messagex, messagey))
-        #SCREEN.blit(IMAGES['base'], (basex, BASEY))
 
         pygame.display.update()
         FPSCLOCK.tick(FPS)
@@ -229,7 +234,6 @@ def mainGame(movementInfo):
     playerMoveAcc =   30   # players distance on moving
     playerMoved = False # True when player move
 
-
     while True:
         for event in pygame.event.get():
             if event.type == QUIT or (event.type == KEYDOWN and event.key == K_ESCAPE):
@@ -265,7 +269,7 @@ def mainGame(movementInfo):
                     playerx += playerMoveX
                     playerSurface = pygame.transform.rotate(IMAGES['player'][playerIndex], visibleRot)
                     SCREEN.blit(playerSurface, (playerx, playery))
-
+    
                     pygame.display.update()
                     FPSCLOCK.tick(FPS)
 
