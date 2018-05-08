@@ -222,7 +222,7 @@ def mainGame(movementInfo):
     playerRot     =   0   # player's rotation
     playerVelRot  =   0   # angular speed
     playerRotThr  =   0   # rotation threshold
-    playerFlapAcc =   3   # players speed on flapping
+    playerMoveAcc =   7   # players speed on moving
     playerFlapped = False # True when player flaps
 
 
@@ -233,12 +233,12 @@ def mainGame(movementInfo):
                 sys.exit()
             if event.type == KEYDOWN and (event.key == K_SPACE or event.key == K_UP):
                 if playery > -2 * IMAGES['player'][0].get_height():
-                    playerVelY = playerFlapAcc
+                    playerVelY = (-1) * playerMoveAcc
                     playerFlapped = True
                     SOUNDS['move'].play()
             if event.type == KEYDOWN and (event.key == K_SPACE or event.key == K_DOWN):
                 if playery > -2 * IMAGES['player'][0].get_height():
-                    playerVelY = (-1) * playerFlapAcc
+                    playerVelY = playerMoveAcc
                     playerFlapped = True
                     SOUNDS['move'].play()
 
@@ -273,8 +273,8 @@ def mainGame(movementInfo):
         basex = -((-basex + 100) % baseShift)
 
         # rotate the player
-        if playerRot > -90:
-            playerRot -= playerVelRot
+        #if playerRot > -90:
+        #    playerRot -= playerVelRot
 
         # player's Y axis movement
         if playerVelY < playerMaxVelY and not playerFlapped:
@@ -286,6 +286,9 @@ def mainGame(movementInfo):
             playerRot = 0
 
         playerHeight = IMAGES['player'][playerIndex].get_height()
+        
+        print(BASEY, playery, playerHeight)
+        print(min(playerVelY, BASEY - playery - playerHeight))
         playery += min(playerVelY, BASEY - playery - playerHeight)
 
         # move pipes to left
