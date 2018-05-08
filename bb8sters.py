@@ -7,8 +7,8 @@ from pygame.locals import *
 
 
 FPS = 30
-SCREENWIDTH  = 400
-SCREENHEIGHT = 400
+SCREENWIDTH  = 500
+SCREENHEIGHT = 500
 # amount by which base can maximum shift to left
 PIPEGAPSIZE  = 100 # gap between upper and lower part of pipe
 BASEY        = SCREENHEIGHT * 0.79
@@ -143,8 +143,8 @@ def showWelcomeAnimation():
     # iterator used to change playerIndex after every 5th iteration
     loopIter = 0
 
-    playerx = int(SCREENWIDTH * 0.45)
-    playery = int((SCREENHEIGHT - IMAGES['player'][0].get_height()) / 2.5)
+    playerx = int(SCREENWIDTH * 0.20)
+    playery = int((SCREENHEIGHT - IMAGES['player'][0].get_height()) / 3.2)
 
     messagex = int((SCREENWIDTH - IMAGES['message'].get_width()) / 2)
     messagey = int(SCREENHEIGHT * 0.12)
@@ -163,7 +163,7 @@ def showWelcomeAnimation():
                 sys.exit()
             if event.type == KEYDOWN and (event.key == K_SPACE or event.key == K_UP):
                 # make first move sound and return values for mainGame
-                #SOUNDS['move'].play()
+                SOUNDS['move'].play()
                 return {
                     'playery': playery + playerShmVals['val'],
                     'basex': basex,
@@ -219,6 +219,10 @@ def mainGame(movementInfo):
     playerMaxMoveY =  0   # max vel along Y, max descend speed
     playerMinMoveY =  0   # min vel along Y, max ascend speed
     playerAccY    =   0   # players downward accleration
+    playerMoveX    =  0   # player's velocity along X, default same as playerMoved
+    playerMaxMoveX =  0   # max vel along X, max descend speed
+    playerMinMoveX =  0   # min vel along X, max ascend speed
+    playerAccX    =   0   # players sideway accleration
     playerRot     =   1   # player's rotation
     playerVelRot  =   0   # angular speed
     playerRotThr  =   0   # rotation threshold
@@ -231,31 +235,43 @@ def mainGame(movementInfo):
             if event.type == QUIT or (event.type == KEYDOWN and event.key == K_ESCAPE):
                 pygame.quit()
                 sys.exit()
-            if event.type == KEYDOWN and (event.key == K_SPACE or event.key == K_UP):
-                if playery > -2 * IMAGES['player'][0].get_height():
-                    playerMoveY = (-1) * playerMoveAcc
-                    playerMoved = True
-                    #SOUNDS['move'].play()
+            if event.type == KEYDOWN:
+                if (event.key == K_UP):
+                    if playery > -2 * IMAGES['player'][0].get_height():
+                        playerMoveY = (-1) * playerMoveAcc
+                        playerMoved = True
+                        #SOUNDS['move'].play()
 
+                if (event.key == K_DOWN):
+                    if playery > -2 * IMAGES['player'][0].get_height():
+                        playerMoveY = playerMoveAcc
+                        playerMoved = True
+                        #SOUNDS['move'].play()
+
+                if (event.key == K_RIGHT):
+                    if playerx > -2 * IMAGES['player'][0].get_height():
+                        playerMoveX = playerMoveAcc
+                        playerMoved = True
+                        #SOUNDS['move'].play()
+
+                if (event.key == K_LEFT):
+                    if playerx > -2 * IMAGES['player'][0].get_height():
+                        playerMoveX = (-1) * playerMoveAcc
+                        playerMoved = True
+                        #SOUNDS['move'].play()
+
+                if playerMoved:
                     playery += playerMoveY
+                    playerx += playerMoveX
                     playerSurface = pygame.transform.rotate(IMAGES['player'][playerIndex], visibleRot)
                     SCREEN.blit(playerSurface, (playerx, playery))
 
                     pygame.display.update()
                     FPSCLOCK.tick(FPS)
-            if event.type == KEYDOWN and (event.key == K_SPACE or event.key == K_DOWN):
-                if playery > -2 * IMAGES['player'][0].get_height():
-                    playerMoveY = playerMoveAcc
-                    playerMoved = True
-                    #SOUNDS['move'].play()
 
-                    playery += playerMoveY
-                    playerSurface = pygame.transform.rotate(IMAGES['player'][playerIndex], visibleRot)
-                    SCREEN.blit(playerSurface, (playerx, playery))
-
-                    pygame.display.update()
-                    FPSCLOCK.tick(FPS)
-
+                    playerMoved = False
+                    playerMoveY = 0
+                    playerMoveX = 0
 
         # check for crash here
         #crashTest = checkCrash({'x': playerx, 'y': playery, 'index': playerIndex},
