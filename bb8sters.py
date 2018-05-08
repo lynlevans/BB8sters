@@ -220,9 +220,9 @@ def mainGame(movementInfo):
     playerMinVelY =  0   # min vel along Y, max ascend speed
     playerAccY    =   1   # players downward accleration
     playerRot     =   0   # player's rotation
-    playerVelRot  =   3   # angular speed
-    playerRotThr  =  20   # rotation threshold
-    playerFlapAcc =  -9   # players speed on flapping
+    playerVelRot  =   0   # angular speed
+    playerRotThr  =   0   # rotation threshold
+    playerFlapAcc =   3   # players speed on flapping
     playerFlapped = False # True when player flaps
 
 
@@ -236,6 +236,12 @@ def mainGame(movementInfo):
                     playerVelY = playerFlapAcc
                     playerFlapped = True
                     SOUNDS['move'].play()
+            if event.type == KEYDOWN and (event.key == K_SPACE or event.key == K_DOWN):
+                if playery > -2 * IMAGES['player'][0].get_height():
+                    playerVelY = (-1) * playerFlapAcc
+                    playerFlapped = True
+                    SOUNDS['move'].play()
+
 
         # check for crash here
         #crashTest = checkCrash({'x': playerx, 'y': playery, 'index': playerIndex},
@@ -270,7 +276,7 @@ def mainGame(movementInfo):
         if playerRot > -90:
             playerRot -= playerVelRot
 
-        # player's movement
+        # player's Y axis movement
         if playerVelY < playerMaxVelY and not playerFlapped:
             playerVelY += playerAccY
         if playerFlapped:
